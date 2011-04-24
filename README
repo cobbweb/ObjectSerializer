@@ -1,3 +1,0 @@
-ObjectSerializer
-
-A lightweight, adapter based library for serializing and unserializing PHP objects. Features getter/setter detection and event hooks for high customisation.

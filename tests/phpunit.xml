@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="ObjectSerializer">
+            <directory>Cob/ObjectSerializer/Tests</directory>
+        </testsuite>
+    </testsuites>
+
+</phpunit>
