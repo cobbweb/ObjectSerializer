@@ -2,7 +2,7 @@
 <phpunit bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="ObjectSerializer">
-            <directory>Cob/ObjectSerializer/Tests</directory>
+            <directory>ObjectSerializer/Tests</directory>
         </testsuite>
     </testsuites>
 

@@ -12,11 +12,11 @@ require_once 'Doctrine/Common/ClassLoader.php';
 
 use Doctrine\Common\ClassLoader;
 
-$loader = new ClassLoader("Cob\ObjectSerializer");
+$loader = new ClassLoader("ObjectSerializer");
 $loader->register();
 
 $loader = new ClassLoader("Doctrine\Common");
 $loader->register();
 
-$loader = new ClassLoader("Cob\ObjectSerializer\Tests", './Cob/ObjectSerializer/Tests');
+$loader = new ClassLoader("ObjectSerializer\Tests", './ObjectSerializer/Tests');
 $loader->register();
