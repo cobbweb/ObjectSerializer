@@ -16,12 +16,18 @@ class SerializerManager
     private $adapter;
 
     /**
+     * @var \ObjectSerializer\ArrayAdapter
+     */
+    private $arrayAdapter;
+
+    /**
      * Adpater to use for serializing
      *
      * @param Adapter $adapter
      */
-    public function __construct(Adapter $adapter)
+    public function __construct(ArrayAdapter $arrayAdapter, Adapter $adapter)
     {
+        $this->arrayAdapter = $arrayAdapter;
         $this->adapter = $adapter;
     }
 
@@ -35,7 +41,8 @@ class SerializerManager
     {
         $this->preSerialize($object);
 
-        $data = $this->adapter->serialize($object);
+        $asArray = $this->arrayAdapter->toArray($object);
+        $data = $this->adapter->serialize($asArray);
 
         return $this->postSerialize($data);
     }
@@ -46,9 +53,10 @@ class SerializerManager
      * @param array $data
      * @return object
      */
-    public function unserialize(array $data)
+    public function unserialize($data)
     {
-        return $this->adapter->unserialize($data);
+        $array = $this->adapter->unserialize($data);
+        return $this->arrayAdapter->toObject($array);
     }
 
     /**

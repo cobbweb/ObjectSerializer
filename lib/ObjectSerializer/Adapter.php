@@ -17,7 +17,7 @@ interface Adapter
      * @param object $object Object to serialize
      * @return void
      */
-    public function serialize($object);
+    public function serialize(array $data);
 
     /**
      * Unserialize an object with data

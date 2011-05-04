@@ -2,8 +2,10 @@
 
 namespace ObjectSerializer\Tests;
 
-use ObjectSerializer\Adapter\ArrayAdapter,
-    ObjectSerializer\SerializerManager;
+use ObjectSerializer\ArrayAdapter\ObjectAdapter,
+    ObjectSerializer\Adapter\ArrayAdapter,
+    ObjectSerializer\SerializerManager,
+    ObjectSerializer\Adapter\JsonAdapter;
 
 class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,9 +13,9 @@ class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
     public function testBasicSerializing()
     {
         $basic = new Basic('Testing');
+        $objectAdapter = new ObjectAdapter();
         $adapter = new ArrayAdapter();
-
-        $sm = new SerializerManager($adapter);
+        $sm = new SerializerManager($objectAdapter, $adapter);
 
         $expects = array(
             'name' => 'Testing',
@@ -36,8 +38,9 @@ class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
             'view' => null
         );
 
-        $adapter = new ArrayAdapter(array('unserialize' => __NAMESPACE__ . '\Basic'));
-        $sm = new SerializerManager($adapter);
+        $objectAdapter = new ObjectAdapter(array('unserialize' => __NAMESPACE__ . '\Basic'));
+        $adapter = new ArrayAdapter();
+        $sm = new SerializerManager($objectAdapter, $adapter);
         $basic = $sm->unserialize($data);
 
         $expects = new Basic('Testing');
@@ -54,8 +57,9 @@ class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
         $basic = new Basic('Testing 2');
         $basic->view = new View('my/path');
 
+        $objectAdapter = new ObjectAdapter();
         $adapter = new ArrayAdapter();
-        $sm = new SerializerManager($adapter);
+        $sm = new SerializerManager($objectAdapter, $adapter);
 
         $expects = array(
             'name' => 'Testing 2',
@@ -82,15 +86,17 @@ class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $adapter = new ArrayAdapter(array(
+        $objectAdapter = new ObjectAdapter(array(
                 'unserialize' => array(
                     __NAMESPACE__ . '\Basic' => array(
                         'view' => __NAMESPACE__ . '\View'
                     )
                 )
         ));
+
+        $adapter = new ArrayAdapter();
         
-        $sm = new SerializerManager($adapter);
+        $sm = new SerializerManager($objectAdapter, $adapter);
 
         $expects = new Basic('Unserialize');
         $expects->setAnotherProtected('withValue');
@@ -100,6 +106,39 @@ class ObjectSerializerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expects, $sm->unserialize($data));
     }
+
+    public function testSimpleJsonSerializing()
+    {
+        $simple = new Simple;
+        $simple->name = "Hello!";
+
+        $arrayAdapter = new ObjectAdapter();
+        $adapter = new JsonAdapter();
+        $sm = new SerializerManager($arrayAdapter, $adapter);
+
+        $expects = '{"name":"Hello!"}';
+        $this->assertEquals($expects, $sm->serialize($simple));
+    }
+
+    public function testSimpleJsonUnserializing()
+    {
+        $json = '{"name":"Hello World!"}';
+        $arrayAdapter = new ObjectAdapter(array('unserialize' => __NAMESPACE__ . '\Simple'));
+        $adapter = new JsonAdapter();
+        $sm = new SerializerManager($arrayAdapter, $adapter);
+
+        $simple = new Simple;
+        $simple->name = "Hello World!";
+
+        $this->assertEquals($simple, $sm->unserialize($json));
+    }
+
+}
+
+class Simple
+{
+
+    public $name;
 
 }
 
